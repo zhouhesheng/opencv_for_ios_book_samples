@@ -268,6 +268,10 @@
 		83E817191736583F0054AED6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/zhouhesheng/Documents/_iLegendSoft/2014/_ffmpeg_ios/opencv_for_ios_book_samples,
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Chapter01_HelloWorld/Chapter01_HelloWorld-Prefix.pch";
 				INFOPLIST_FILE = "Chapter01_HelloWorld/Chapter01_HelloWorld-Info.plist";
@@ -279,6 +283,10 @@
 		83E8171A1736583F0054AED6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/zhouhesheng/Documents/_iLegendSoft/2014/_ffmpeg_ios/opencv_for_ios_book_samples,
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Chapter01_HelloWorld/Chapter01_HelloWorld-Prefix.pch";
 				INFOPLIST_FILE = "Chapter01_HelloWorld/Chapter01_HelloWorld-Info.plist";
@@ -306,6 +314,7 @@
 				83E8171A1736583F0054AED6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
