@@ -120,7 +120,72 @@
     cvReleaseImage(&src_tmp1);
 }
 
+//图片匹配
+-(BOOL)ComparePPKImage:(IplImage*)mIplImage withAnotherImage:(IplImage*)mIplImage1 withTempleImage:(IplImage*)mTempleImage
+{
+    //第一次模板标记
+    CvPoint minLoc =[self CompareTempleImage:mTempleImage withImage:mIplImage];
+    if (minLoc.x==mIplImage->width || minLoc.y==mIplImage->height) {
+        printf("第一个图片的模板标记失败\n");
+        return false;
+    }
+    //第二次模板标记
+    CvPoint minLoc1 =[self CompareTempleImage:mTempleImage withImage:mIplImage1];
+    if (minLoc1.x==mIplImage1->width || minLoc1.y==mIplImage1->height) {
+        printf("第二个图片的模板标记失败\n");
+        return false;
+    }
+    //裁切图片
+    IplImage *cropImage,*cropImage1;
+    cropImage =[self cropIplImage:mIplImage withStartPoint:minLoc withWidth:mTempleImage->width withHeight:mTempleImage->height];
+    cropImage1=[self cropIplImage:mIplImage1 withStartPoint:minLoc1 withWidth:mTempleImage->width withHeight:mTempleImage->height];
+    double rst = [self CompareHist:cropImage withParam2:cropImage1];
+    if (rst<0.05) {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 
+/// 基于模板图片的标记识别
+-(CvPoint)CompareTempleImage:(IplImage*)templeIpl withImage:(IplImage*)mIplImage
+{
+    IplImage *src = mIplImage;
+    IplImage *templat = templeIpl;
+    IplImage *result;
+    int srcW, srcH, templatW, templatH, resultH, resultW;
+    srcW = src->width;
+    srcH = src->height;
+    templatW = templat->width;
+    templatH = templat->height;
+    resultW = srcW - templatW + 1;
+    resultH = srcH - templatH + 1;
+    result = cvCreateImage(cvSize(resultW, resultH), 32, 1);
+    cvMatchTemplate(src, templat, result, CV_TM_SQDIFF);
+    double minValue, maxValue;
+    CvPoint minLoc, maxLoc;
+    cvMinMaxLoc(result, &minValue, &maxValue, &minLoc, &maxLoc);
+    if (minLoc.y+templatH>srcH || minLoc.x+templatW>srcW) {
+        printf("未找到标记图片\n");
+        minLoc.x=srcW;
+        minLoc.y=srcH;
+    }
+    return minLoc;
+}
+
+
+-(IplImage*)cropIplImage:(IplImage*)srcIpl withStartPoint:(CvPoint)mPoint withWidth:(int)width withHeight:(int)height
+{
+    //裁剪后的图片
+    IplImage *cropImage;
+    cvSetImageROI(srcIpl, cvRect(mPoint.x, mPoint.y, width, height));
+    cropImage = cvCreateImage(cvGetSize(srcIpl), IPL_DEPTH_8U, 3);
+    cvCopy(srcIpl, cropImage);
+    cvResetImageROI(srcIpl);
+    return cropImage;
+}
 
 /// UIImage类型转换为IPlImage类型
 -(IplImage*)convertToIplImage:(UIImage*)image
